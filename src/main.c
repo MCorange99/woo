@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
     Vector2 window_size = {800, 600};
     Vector2 size = {100, 60};
     Vector2 pos = {0};
-    Vector2 spd = {0};
+    Vector2 spd = {1};
     float logo_tint = 0;
 
     InitWindow(window_size.x, window_size.y, version_text);
@@ -53,33 +53,50 @@ int main(int argc, char** argv) {
             window_size.y = GetScreenHeight();
 
             if (pos.x <= 0) {
-                spd.x += ACCEL; //+ (-pos.x) / 50;
+                float res = (0 - pos.x);
+                printf("dx = %f\n", res);
+                spd.x += res;
+                // spd.x += ACCEL; //+ (-pos.x) / 50;
             } else
             if ((pos.x + size.x) >= window_size.x) {
-                spd.x -= ACCEL; //+ pos.x / 50;
+                spd.x -= ((pos.x + size.x) - window_size.x);
+                // spd.x -= ACCEL; //+ pos.x / 50;
             }
             if (pos.y <= 0) {
-                spd.y += ACCEL;// + (-spd.y) / 50;
+                float res = (0 - pos.y);
+                printf("dy = %f\n", res);
+                spd.y += res;
+                // spd.y += ACCEL;// + (-spd.y) / 50;
             } else
             if ((pos.y + size.y) >= window_size.y) {
-                spd.y -= ACCEL; // + spd.y / 50;
+                spd.y -= ((pos.y + size.y) - window_size.y);
+                // spd.y -= ACCEL; // + spd.y / 50;
             }
+            
 
+            //? Deceleration
             if (spd.x > ACCEL) spd.x -= DECEL + spd.x / 100;
             if (spd.x < -ACCEL) spd.x += DECEL - spd.x / 100;
             if (spd.y > ACCEL) spd.y -= DECEL + spd.y / 100;
             if (spd.y < -ACCEL) spd.y += DECEL - spd.y / 100;
 
+            //? MAX speed
             if (spd.x > LIMIT) spd.x = LIMIT;
             if (spd.x < -LIMIT) spd.x = -LIMIT;
             if (spd.y > LIMIT) spd.y = LIMIT;
             if (spd.y < -LIMIT) spd.y = -LIMIT;
 
+            //? MIN speed
+            if (spd.x < ACCEL && spd.x >= 0) spd.x += ACCEL;
+            if (spd.x > -ACCEL && spd.x < 0) spd.x += -ACCEL;
+            if (spd.y < ACCEL && spd.y >= 0) spd.y += ACCEL;
+            if (spd.y > -ACCEL && spd.y < 0) spd.y += -ACCEL;
+
 
             pos.x += spd.x;
             pos.y += spd.y;
 
-            if (argc > 2 && *argv[1] == 'v')
+            if (argc > 1 && *argv[1] == 'v')
                 printf("spd = (%f, %f) pos = (%f, %f)\n", spd.x, spd.y, pos.x, pos.y);
 
             logo_tint += 1;
